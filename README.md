@@ -110,23 +110,28 @@ gh-cms/
 ## Recursos da API
 
 ### `/api/contents`
+
 - `GET`: Lista arquivos e pastas em um diretório (suporta parâmetro `branch`)
 
 ### `/api/files`
+
 - `GET`: Obtém conteúdo de um arquivo específico (suporta parâmetro `branch`)
 - `POST`: Cria ou atualiza um arquivo (cria branch automaticamente para novos arquivos)
 - `DELETE`: Remove um arquivo
 
 ### `/api/branches`
+
 - `GET`: Lista todas as branches do repositório
 - `POST`: Cria uma nova branch
 - `DELETE`: Remove uma branch
 
 ### `/api/pull-requests`
+
 - `GET`: Lista pull requests abertos
 - `POST`: Cria um novo pull request
 
 ### `/api/pull-requests/[id]/merge`
+
 - `POST`: Faz merge de um pull request específico
 
 ## Segurança e Controle
@@ -137,6 +142,18 @@ gh-cms/
 - 🌿 **Isolamento**: Novos conteúdos são isolados em branches até publicação
 - 🔍 **Revisão**: Pull requests permitem revisão antes da publicação
 - 🧹 **Limpeza Automática**: Branches são removidas após merge
+
+## TODOs
+
+[ ] - criar versão não publicada para revisão
+[ ] - mover o projeto para /admin
+[ ] - / exibir conteúdos
+[ ] - criar rota para preview de versão em rascunho
+[ ] - incluir categorias
+[ ] - alterar o /api/contents para concatenar as versões dos arquivos passando parâmetro `all_versions=true`
+[ ] - alterar o editor de html para salvar arquivos html
+[ ] - criar config de estrutura de conteúdo com campos customizáveis - salvar config no github /config_cms.json (gerenciável pelo admin)
+[ ] - criar tela de autenticação gerenciar via json encriptado via secret no env.local
 
 ## Deploy on Vercel
 

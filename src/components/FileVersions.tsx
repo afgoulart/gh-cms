@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { FileVersion } from '@/lib/github';
+import { useEffect, useState } from "react";
+
+import { FileVersion } from "@/lib/github";
 
 interface FileVersionsProps {
   filePath: string;
@@ -26,38 +27,38 @@ export default function FileVersions({ filePath, onVersionSelect, selectedVersio
       const response = await fetch(`/api/file-versions?path=${encodeURIComponent(filePath)}`);
       const data = await response.json();
       setVersions(data);
-      
+
       // Auto-select the published version if available, otherwise the first version
       if (data.length > 0 && !selectedVersion) {
         const publishedVersion = data.find((v: FileVersion) => v.isPublished) || data[0];
         onVersionSelect(publishedVersion);
       }
     } catch (error) {
-      console.error('Erro ao carregar versões:', error);
+      console.error("Erro ao carregar versões:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const truncateMessage = (message: string, maxLength: number = 50) => {
     if (message.length <= maxLength) return message;
-    return message.substring(0, maxLength) + '...';
+    return message.substring(0, maxLength) + "...";
   };
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-primary p-4">
-        <div className="flex items-center justify-center py-4">
+      <div className="bg-white p-4 border border-primary rounded-lg">
+        <div className="flex justify-center items-center py-4">
           <div className="text-secondary">Carregando versões...</div>
         </div>
       </div>
@@ -66,9 +67,9 @@ export default function FileVersions({ filePath, onVersionSelect, selectedVersio
 
   if (versions.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-primary p-4">
-        <div className="text-center py-4 text-secondary">
-          <div className="text-2xl mb-2">📄</div>
+      <div className="bg-white p-4 border border-primary rounded-lg">
+        <div className="py-4 text-secondary text-center">
+          <div className="mb-2 text-2xl">📄</div>
           <div>Nenhuma versão encontrada</div>
         </div>
       </div>
@@ -79,75 +80,67 @@ export default function FileVersions({ filePath, onVersionSelect, selectedVersio
   const displayVersions = expanded ? versions : versions.slice(0, 3);
 
   return (
-    <div className="bg-white rounded-lg border border-primary">
-      <div className="p-4 border-b border-secondary">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-primary">
-            Versões do Arquivo
-          </h3>
-          <div className="text-sm text-secondary">
-            {versions.length} versão{versions.length !== 1 ? 'es' : ''}
+    <div className="bg-white border border-primary rounded-lg">
+      <div className="p-4 border-secondary border-b">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-primary text-lg">Versões do Arquivo</h3>
+          <div className="text-secondary text-sm">
+            {versions.length} versão{versions.length !== 1 ? "es" : ""}
           </div>
         </div>
       </div>
-      
+
       <div className="divide-y divide-secondary">
         {displayVersions.map((version, index) => (
           <div
             key={`${version.branch}-${version.sha}`}
             onClick={() => onVersionSelect(version)}
             className={`p-4 cursor-pointer hover:bg-card/30 transition-colors duration-250 ${
-              selectedVersion?.sha === version.sha ? 'bg-card/50 border-l-4 border-l-accent' : ''
+              selectedVersion?.sha === version.sha ? "bg-card/50 border-l-4 border-l-accent" : ""
             }`}
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
-                    version.isPublished ? 'status-published' : 'status-draft'
-                  }`}>
-                    {version.isPublished ? '✅ Publicado' : '📝 Rascunho'}
+            <div className="flex justify-between items-start">
+              <div className="flex flex-wrap flex-1 min-w-0">
+                <div className="flex flex-row items-center space-x-2 mb-2">
+                  <span
+                    className={`inline-flex items-center whitespace-nowrap px-2 py-1 rounded-full text-xs font-semibold ${
+                      version.isPublished ? "status-published" : "status-draft"
+                    }`}
+                  >
+                    {version.isPublished ? "✅ Publicado" : "📝 Rascunho"}
                   </span>
-                  <span className="text-sm text-secondary">
-                    em {version.branch}
-                  </span>
+                  {/* <span className="text-secondary text-sm">em {version.branch}</span> */}
                   {index === 0 && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-accent text-navy">
+                    <span className="inline-flex items-center bg-accent px-2 py-1 rounded-full text-navy text-xs">
                       🕐 Mais recente
                     </span>
                   )}
                 </div>
-                
-                <p className="text-sm text-primary font-medium mb-1">
-                  {truncateMessage(version.commitMessage)}
-                </p>
-                
-                <div className="flex items-center space-x-4 text-xs text-secondary">
+
+                <p className="mb-1 font-medium text-primary text-sm">{truncateMessage(version.commitMessage)}</p>
+
+                <div className="flex items-center space-x-4 text-secondary text-xs">
                   <span>👤 {version.author}</span>
                   <span>📅 {formatDate(version.lastModified)}</span>
                   <span className="font-mono">#{version.sha.substring(0, 7)}</span>
                 </div>
               </div>
-              
-              <div className="ml-4 flex-shrink-0">
-                {selectedVersion?.sha === version.sha && (
-                  <div className="text-accent text-lg">
-                    👁️
-                  </div>
-                )}
-              </div>
+
+              {/* <div className="flex-shrink-0 ml-4">
+                {selectedVersion?.sha === version.sha && <div className="text-accent text-lg">👁️</div>}
+              </div> */}
             </div>
           </div>
         ))}
       </div>
-      
+
       {versions.length > 3 && (
-        <div className="p-3 border-t border-secondary text-center">
+        <div className="p-3 border-secondary border-t text-center">
           <button
             onClick={() => setExpanded(!expanded)}
             className="text-secondary hover:text-primary text-sm transition-colors duration-250"
           >
-            {expanded ? '👆 Mostrar menos' : `👇 Mostrar mais ${versions.length - 3} versões`}
+            {expanded ? "👆 Mostrar menos" : `👇 Mostrar mais ${versions.length - 3} versões`}
           </button>
         </div>
       )}

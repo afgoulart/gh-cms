@@ -9,7 +9,7 @@ import PublishManager from "@/components/PublishManager";
 import { ContentFile, FileVersion } from "@/lib/github";
 
 export default function Home() {
-  const [currentPath, setCurrentPath] = useState(""); // Iniciar na pasta posts
+  const [currentPath, setCurrentPath] = useState("posts"); // Iniciar na pasta posts
   const [selectedFile, setSelectedFile] = useState<ContentFile | null>(null);
   const [selectedVersion, setSelectedVersion] = useState<FileVersion | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +25,7 @@ export default function Home() {
   const handleRefresh = () => {
     setRefreshKey((prev) => prev + 1);
   };
+
 
   const handleSave = async (path: string, content: string, message: string, isNewFile?: boolean) => {
     try {
@@ -115,10 +116,10 @@ export default function Home() {
 
           <div>
             {isEditing ? (
-              <FileEditor
-                file={selectedFile}
-                onSave={handleSave}
-                onClose={handleClose}
+              <FileEditor 
+                file={selectedFile} 
+                onSave={handleSave} 
+                onClose={handleClose} 
                 onDelete={handleDelete}
                 selectedVersion={selectedVersion}
               />
