@@ -1,26 +1,117 @@
 @import "tailwindcss";
+@import "@uiw/react-md-editor/markdown-editor.css";
+@import '@uiw/react-markdown-preview/markdown.css';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta personalizada GitHub CMS */
+  --navy: #0B2240;
+  --navy-light: #1A3A5C;
+  --navy-dark: #041829;
+  --blue-medium: #4C6693;
+  --blue-medium-light: #5A7AAF;
+  --turquoise: #9EDAD6;
+  --turquoise-light: #B3F0E6;
+  --mint-light: #D2E9E2;
+  --mint-light-light: #E0F2ED;
+  --peach-light: #F6B7A7;
+  --peach-light-light: #F8C6B7;
+  
+  /* Cores principais da aplicação */
+  --background: #F9FAFB;
+  --foreground: var(--navy);
+  --primary: var(--navy);
+  --secondary: var(--blue-medium);
+  --accent: var(--turquoise);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-navy: var(--navy);
+  --color-navy-light: var(--navy-light);
+  --color-blue-medium: var(--blue-medium);
+  --color-blue-medium-light: var(--blue-medium-light);
+  --color-turquoise: var(--turquoise);
+  --color-mint-light: var(--mint-light);
+  --color-peach-light: var(--peach-light);
+  --font-sans: var(--font-roboto);
+  --font-mono: var(--font-roboto-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Estilos personalizados para componentes */
+.status-published {
+  @apply bg-turquoise text-navy;
+}
+
+.status-draft {
+  @apply bg-mint-light text-navy;
+}
+
+.status-pending {
+  @apply bg-peach-light text-navy;
+}
+
+/* Animações suaves */
+* {
+  transition-duration: 250ms;
+}
+
+/* Scroll personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--mint-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--blue-medium);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--navy);
+}
+
+/* Customização do MD Editor para seguir a paleta de cores */
+.w-md-editor {
+  background-color: white !important;
+}
+
+.w-md-editor.w-md-editor-focus {
+  border-color: var(--turquoise) !important;
+  box-shadow: 0 0 0 2px rgba(158, 218, 214, 0.2) !important;
+}
+
+.w-md-editor-text-container .w-md-editor-text {
+  color: var(--navy) !important;
+  font-size: 14px !important;
+}
+
+.w-md-editor-toolbar {
+  border-bottom: 1px solid var(--mint-light) !important;
+  background-color: var(--mint-light) !important;
+}
+
+.w-md-editor-toolbar-divider {
+  background-color: var(--blue-medium) !important;
+}
+
+.w-md-editor-toolbar ul li button {
+  color: var(--blue-medium) !important;
+}
+
+.w-md-editor-toolbar ul li button:hover {
+  background-color: var(--turquoise-light) !important;
+  color: var(--navy) !important;
 }
