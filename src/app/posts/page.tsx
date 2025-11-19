@@ -25,8 +25,8 @@ export default function PostsPage() {
 
   const fetchPosts = async () => {
     try {
-      // Busca posts da pasta /posts na branch principal
-      const mainResponse = await fetch("/api/contents?path=&branch=main");
+      // Busca posts da pasta /content na branch principal
+      const mainResponse = await fetch("/api/contents?path=content&branch=main");
       const mainData = await mainResponse.json();
 
       // Busca posts de todas as branches
@@ -35,10 +35,10 @@ export default function PostsPage() {
 
       let allPosts: Post[] = [];
 
-      // Adiciona posts da main (pasta /posts)
+      // Adiciona posts da main (pasta /content)
       if (Array.isArray(mainData)) {
         const mainPosts = mainData
-          .filter((item: ContentFile) => item.type === "file" && item.name.endsWith(".md"))
+          .filter((item: ContentFile) => item.type === "file" && item.name.endsWith(".md") && item.path.startsWith("content/"))
           .map((item: ContentFile) => ({
             ...item,
             title: extractTitle(item.name),
@@ -52,11 +52,11 @@ export default function PostsPage() {
         if (branch.name === "main") continue;
 
         try {
-          // Tenta buscar na pasta /posts primeiro
-          let branchResponse = await fetch(`/api/contents?path=s&branch=${branch.name}`);
+          // Tenta buscar na pasta /content primeiro
+          let branchResponse = await fetch(`/api/contents?path=content&branch=${branch.name}`);
           let branchData = await branchResponse.json();
 
-          // Se não encontrou a pasta posts, busca na raiz da branch
+          // Se não encontrou a pasta content, busca na raiz da branch
           if (!Array.isArray(branchData) || branchData.length === 0) {
             branchResponse = await fetch(`/api/contents?path=&branch=${branch.name}`);
             branchData = await branchResponse.json();
@@ -64,7 +64,7 @@ export default function PostsPage() {
 
           if (Array.isArray(branchData)) {
             const branchPosts = branchData
-              .filter((item: ContentFile) => item.type === "file" && item.name.endsWith(".md"))
+              .filter((item: ContentFile) => item.type === "file" && item.name.endsWith(".md") && item.path.startsWith("content/"))
               .map((item: ContentFile) => ({
                 ...item,
                 title: extractTitle(item.name),

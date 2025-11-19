@@ -29,8 +29,14 @@ export default function FileExplorer({
   const fetchContents = async () => {
     setLoading(true);
     try {
+      // Build the path ensuring it starts with 'content'
+      let searchPath = currentPath;
+      if (!searchPath.startsWith('content')) {
+        searchPath = searchPath ? `content/${searchPath}` : 'content';
+      }
+
       // Get files from main branch by default, but show all versions when file is selected
-      const response = await fetch(`/api/contents?path=${encodeURIComponent(currentPath)}&branch=main`);
+      const response = await fetch(`/api/contents?path=${encodeURIComponent(searchPath)}&branch=main`);
       const mainData = await response.json();
       
       // Also get files from all branches to show a complete picture
@@ -43,11 +49,14 @@ export default function FileExplorer({
       // Add files from main branch first
       if (Array.isArray(mainData)) {
         mainData.forEach((item: ContentFile) => {
-          if (item.type === 'file') {
-            item.published = true;
-            item.branch = 'main';
+          // Only show files that are within the content folder
+          if (item.path.startsWith('content/')) {
+            if (item.type === 'file') {
+              item.published = true;
+              item.branch = 'main';
+            }
+            fileMap.set(item.path, item);
           }
-          fileMap.set(item.path, item);
         });
       }
       
@@ -56,36 +65,39 @@ export default function FileExplorer({
         if (branch.name === 'main') continue;
         
         try {
-          const branchResponse = await fetch(`/api/contents?path=${encodeURIComponent(currentPath)}&branch=${branch.name}`);
+          const branchResponse = await fetch(`/api/contents?path=${encodeURIComponent(searchPath)}&branch=${branch.name}`);
           const branchData = await branchResponse.json();
           
           if (Array.isArray(branchData)) {
             branchData.forEach((item: ContentFile) => {
-              if (item.type === 'file') {
-                // Only add if we don't already have this file from main branch
-                if (!fileMap.has(item.path)) {
-                  item.published = false;
-                  item.branch = branch.name;
-                  fileMap.set(item.path, item);
-                }
-              } else {
-                // For directories, always add from main to avoid duplicates
-                if (!fileMap.has(item.path) && branch.name === 'main') {
-                  fileMap.set(item.path, item);
+              // Only show files that are within the content folder
+              if (item.path.startsWith('content/')) {
+                if (item.type === 'file') {
+                  // Only add if we don't already have this file from main branch
+                  if (!fileMap.has(item.path)) {
+                    item.published = false;
+                    item.branch = branch.name;
+                    fileMap.set(item.path, item);
+                  }
+                } else {
+                  // For directories, always add from main to avoid duplicates
+                  if (!fileMap.has(item.path) && branch.name === 'main') {
+                    fileMap.set(item.path, item);
+                  }
                 }
               }
             });
           }
         } catch (error) {
           // Branch might not have this path, skip silently
-          console.log(`Path ${currentPath} not found in branch ${branch.name}`);
+          console.log(`Path ${searchPath} not found in branch ${branch.name}`);
         }
       }
       
       setContents(Array.from(fileMap.values()));
     } catch (error) {
       console.error('Erro ao carregar conteúdos:', error);
-      // Fallback to empty array instead of keeping loading state
+      // If content folder doesn't exist, show empty state
       setContents([]);
     } finally {
       setLoading(false);
@@ -122,7 +134,13 @@ export default function FileExplorer({
     const pathParts = currentPath.split('/');
     pathParts.pop();
     const newPath = pathParts.join('/');
-    onPathChange(newPath);
+    
+    // Don't allow navigating above the content folder
+    if (newPath === '' || !newPath.startsWith('content')) {
+      onPathChange('content');
+    } else {
+      onPathChange(newPath);
+    }
     setSelectedFile(null);
     setSelectedVersion(null);
   };
@@ -155,21 +173,21 @@ export default function FileExplorer({
         <div className="mb-4 flex items-center space-x-2">
           <button
             onClick={() => {
-              onPathChange('');
+              onPathChange('content');
               setSelectedFile(null);
             }}
             className="text-secondary hover:text-primary transition-colors duration-250"
           >
-            📁 Raiz
+            📁 Content
           </button>
-          {currentPath && (
+          {currentPath && currentPath !== 'content' && (
             <>
               <span className="text-secondary/50">/</span>
-              {currentPath.split('/').map((part, index, array) => (
+              {currentPath.replace('content/', '').split('/').filter(part => part).map((part, index, array) => (
                 <div key={index} className="flex items-center">
                   <button
                     onClick={() => {
-                      const newPath = array.slice(0, index + 1).join('/');
+                      const newPath = 'content/' + array.slice(0, index + 1).join('/');
                       onPathChange(newPath);
                       setSelectedFile(null);
                     }}
@@ -185,7 +203,7 @@ export default function FileExplorer({
         </div>
 
         {/* Back button */}
-        {currentPath && (
+        {currentPath && currentPath !== 'content' && (
           <button
             onClick={navigateUp}
             className="mb-4 text-secondary hover:text-primary flex items-center transition-colors duration-250"

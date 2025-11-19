@@ -39,7 +39,7 @@ export default function NewPostPage() {
     setSaving(true);
     try {
       const filename = slugToFilename(slug);
-      const filePath = `posts/${filename}`; // Salvar na pasta /posts
+      const filePath = `content/${filename}`; // Salvar na pasta /content
       const postContent = `# ${title}\n\n${content}`;
       const commitMessage = `Novo post: ${title}`;
 
@@ -152,7 +152,7 @@ export default function NewPostPage() {
             />
             {slug && (
               <p className="text-sm text-secondary mt-2">
-                <strong>Arquivo:</strong> posts/{slugToFilename(slug)}
+                <strong>Arquivo:</strong> content/{slugToFilename(slug)}
               </p>
             )}
           </div>

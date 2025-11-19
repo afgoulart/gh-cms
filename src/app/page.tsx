@@ -9,7 +9,7 @@ import PublishManager from "@/components/PublishManager";
 import { ContentFile, FileVersion } from "@/lib/github";
 
 export default function Home() {
-  const [currentPath, setCurrentPath] = useState(""); // Iniciar na pasta posts
+  const [currentPath, setCurrentPath] = useState("content"); // Iniciar na pasta content
   const [selectedFile, setSelectedFile] = useState<ContentFile | null>(null);
   const [selectedVersion, setSelectedVersion] = useState<FileVersion | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -99,8 +99,8 @@ export default function Home() {
     <Layout>
       <div className="mx-auto">
         <div className="mb-8">
-          <h1 className="mb-2 font-bold text-primary text-2xl">Gerenciador de Posts</h1>
-          <p className="text-secondary">Explore e gerencie todos os posts do seu repositório GitHub</p>
+          <h1 className="mb-2 font-bold text-primary text-2xl">Gerenciador de Conteúdo</h1>
+          <p className="text-secondary">Explore e gerencie todos os arquivos da pasta /content do seu repositório</p>
         </div>
         <div className="flex flex-row gap-8">
           <div>
